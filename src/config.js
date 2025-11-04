@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'https://faculty.cs.usna.edu/~downs/php_react/api'
+export const API_BASE_URL = 'https://midn.cs.usna.edu/~m265454/QuizForMidz/api'
