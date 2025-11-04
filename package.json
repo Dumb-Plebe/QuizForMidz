@@ -1,0 +1,20 @@
+{
+  "name": "php_react",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/index.jsx --bundle --outfile=bundle.js --jsx=automatic --loader:.js=jsx --loader:.jsx=jsx",
+    "start": "esbuild src/index.jsx --bundle --outfile=bundle.js --jsx=automatic --loader:.js=jsx --loader:.jsx=jsx --servedir=."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10"
+  }
+}
