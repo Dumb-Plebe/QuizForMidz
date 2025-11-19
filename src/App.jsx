@@ -1,51 +1,62 @@
-import SimpleCounter from "./SimpleCounter.jsx"
-import CounterContainer from "./CounterContainer.jsx"
-import DataStorage from "./DataStorage.jsx"
-import GameOfLifeContainer from "./GameOfLifeContainer.jsx"
-import TextTransformContainer from "./TextTransformContainer.jsx"
+import React, { useState } from 'react';
+// 1. IMPORT YOUR NEW FILES
+import TeacherLobby from './TeacherLobby';
+import StudentJoin from './StudentJoin';
 
-// The data-text="new" attribute is important - it tells the
-// CSS what text to display for the pseudo-elements
-// (::before and ::after) that create the colored ghost
-// effects.
+// If the original project had a main component, import it here.
+// For this example, I'll assume we are replacing the view, 
+// but if you want to keep the falling objects, you can wrap this whole thing in that layout.
 
-export default function App() {
+function App() {
+  // 2. CREATE A "STATE" TO TRACK WHICH PAGE WE ARE ON
+  const [currentView, setCurrentView] = useState('home'); 
+
   return (
-  <div>
-    <h1>Hello from React!</h1>
-    <p> This is my <span className="glitch-text" data-text="new">new</span> website! </p>
+    <div className="min-h-screen bg-slate-900 text-white font-sans">
+      
+      {/* --- VIEW 1: HOME SCREEN --- */}
+      {currentView === 'home' && (
+        <div className="flex flex-col items-center justify-center h-screen text-center p-4">
+          <h1 className="text-6xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-cyan-500">
+            QuizForMidz
+          </h1>
+          <div className="flex gap-6">
+            <button 
+              onClick={() => setCurrentView('teacher')}
+              className="px-8 py-4 bg-purple-600 hover:bg-purple-500 rounded-2xl text-2xl font-bold shadow-lg transition-all hover:scale-105"
+            >
+              Teacher Host
+            </button>
+            <button 
+              onClick={() => setCurrentView('student')}
+              className="px-8 py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl text-2xl font-bold shadow-lg transition-all hover:scale-105"
+            >
+              Student Join
+            </button>
+          </div>
+        </div>
+      )}
 
-    <div className="explainer-box">
-      <p>These buttons keeps track of their own state:</p>
-        <SimpleCounter />
-        <br /><br />
-        <SimpleCounter />
+      {/* --- VIEW 2: TEACHER LOBBY --- */}
+      {currentView === 'teacher' && (
+        <div className="relative">
+            {/* Back Button */}
+            <button onClick={() => setCurrentView('home')} className="absolute top-4 left-4 text-sm opacity-50 hover:opacity-100">← Back</button>
+            <TeacherLobby />
+        </div>
+      )}
+
+      {/* --- VIEW 3: STUDENT JOIN --- */}
+      {currentView === 'student' && (
+        <div className="relative">
+            {/* Back Button */}
+            <button onClick={() => setCurrentView('home')} className="absolute top-4 left-4 text-sm opacity-50 hover:opacity-100">← Back</button>
+            <StudentJoin />
+        </div>
+      )}
+
     </div>
-
-    <div className="explainer-box">
-      <p>These buttons share state:</p>
-        <CounterContainer />
-    </div>
-
-    <div className="explainer-box">
-      <p>This component saves/loads data to the server:</p>
-        <DataStorage />
-    </div>
-
-    <div className="explainer-box">
-      <p>This text updates automatically:</p>
-        <TextTransformContainer />
-    </div>
-
-    <div className="explainer-box">
-      <p>
-        Here's the Game of Life. Click a cell to toggle it.
-        Live cell with 2-3 neighbors survives. Live cell with &lt;2 or  &gt;3 neighbors dies.
-        Dead cell with exactly 3 neighbors becomes alive.
-      </p>
-        <GameOfLifeContainer gridSize={15} />
-    </div>
-
-  </div>
   );
 }
+
+export default App;

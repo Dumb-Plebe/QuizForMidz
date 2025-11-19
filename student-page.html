@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Join Game - QuizForMidz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: #0f172a;
+            color: white;
+            overflow: hidden; /* Prevent scrolling */
+            height: 100vh;
+        }
+
+        /* --- ANIMATED BACKGROUND --- */
+        .blob-cont {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden;
+        }
+        .blob {
+            position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6;
+            animation: float 20s infinite alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 80vw; height: 80vw; background: #7c3aed; }
+        .blob-2 { bottom: -10%; right: -10%; width: 80vw; height: 80vw; background: #2563eb; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50px, 50px) rotate(10deg); }
+        }
+
+        /* --- GLASS PANEL --- */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- INPUT STYLING --- */
+        .pin-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .pin-input:focus {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: #22d3ee; /* Cyan glow */
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+            outline: none;
+        }
+
+        /* --- 3D BUTTON --- */
+        .game-btn {
+            transition: transform 0.1s, filter 0.1s;
+            position: relative; overflow: hidden; border: none;
+            border-bottom: 6px solid #1e3a8a; /* Darker blue shadow */
+        }
+        .game-btn:active {
+            transform: translateY(4px); border-bottom-width: 2px; margin-top: 4px; filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4">
+
+    <div class="blob-cont">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="glass-panel w-full max-w-sm p-8 rounded-[2rem] text-center relative">
+        
+        <h1 class="text-4xl font-black tracking-tighter mb-2 drop-shadow-xl">
+            Quiz<span class="text-cyan-400">For</span>Midz
+        </h1>
+        <p class="text-white/60 font-bold uppercase text-xs tracking-[0.2em] mb-8">Student Portal</p>
+
+        <div class="space-y-4">
+            
+            <div>
+                <input type="text" 
+                       id="pin-input" 
+                       inputmode="numeric" 
+                       pattern="[0-9]*" 
+                       maxlength="6"
+                       placeholder="Game PIN" 
+                       class="pin-input w-full py-4 text-center text-3xl font-black rounded-xl text-white placeholder-white/20 tracking-[0.5em]"
+                       autocomplete="off">
+            </div>
+
+            <button id="join-btn" class="game-btn bg-blue-600 w-full py-4 rounded-xl text-xl font-black text-white uppercase tracking-wider shadow-xl">
+                Enter
+            </button>
+
+        </div>
+
+        <div id="error-msg" class="hidden mt-6 bg-red-500/20 border border-red-500/50 text-red-200 text-sm font-bold py-2 px-4 rounded-lg animate-pulse">
+            Please enter a valid PIN
+        </div>
+
+    </div>
+
+    <script>
+        const pinInput = document.getElementById('pin-input');
+        const joinBtn = document.getElementById('join-btn');
+        const errorMsg = document.getElementById('error-msg');
+
+        // Force numeric input only (visual cleanup)
+        pinInput.addEventListener('input', function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            errorMsg.classList.add('hidden'); // Hide error when typing
+        });
+
+        // Handle Join Click
+        joinBtn.addEventListener('click', () => {
+            const pin = pinInput.value;
+
+            if (pin.length !== 6) {
+                // Show Error
+                errorMsg.innerText = "PIN must be 6 digits";
+                errorMsg.classList.remove('hidden');
+                pinInput.classList.add('border-red-500');
+                setTimeout(() => pinInput.classList.remove('border-red-500'), 500);
+            } else {
+                // SUCCESS LOGIC
+                console.log(`Joining game with PIN: ${pin}`);
+                
+                // Visual Feedback (Change button text)
+                const originalText = joinBtn.innerText;
+                joinBtn.innerText = "CONNECTING...";
+                joinBtn.classList.add('opacity-80', 'cursor-wait');
+                
+                // Reset after 2 seconds (Simulation)
+                setTimeout(() => {
+                    joinBtn.innerText = originalText;
+                    joinBtn.classList.remove('opacity-80', 'cursor-wait');
+                    alert("Searching for game: " + pin + "\n(Backend logic to be added later)");
+                }, 1500);
+            }
+        });
+
+        // Allow "Enter" key to trigger join
+        pinInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                joinBtn.click();
+            }
+        });
+    </script>
+
+</body>
+</html>
