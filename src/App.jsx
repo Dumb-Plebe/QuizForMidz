@@ -1,15 +1,27 @@
-import React, { useState } from 'react';
-// 1. IMPORT YOUR NEW FILES
+import React, { useState } from 'react'; // Removed useEffect
 import TeacherLobby from './TeacherLobby';
 import StudentJoin from './StudentJoin';
 
-// If the original project had a main component, import it here.
-// For this example, I'll assume we are replacing the view, 
-// but if you want to keep the falling objects, you can wrap this whole thing in that layout.
+export default function App() {
+  // --- 1. CHECK STORAGE IMMEDIATELY (The Fix) ---
+  // By putting a function inside useState, it runs BEFORE the screen draws.
+  const [currentView, setCurrentView] = useState(() => {
+    const teacherPin = sessionStorage.getItem('teacher_pin');
+    const studentPin = sessionStorage.getItem('student_pin');
 
-function App() {
-  // 2. CREATE A "STATE" TO TRACK WHICH PAGE WE ARE ON
-  const [currentView, setCurrentView] = useState('home'); 
+    if (teacherPin) return 'teacher';
+    if (studentPin) return 'student';
+    return 'home';
+  });
+
+  // --- LOGOUT HELPER ---
+  const handleLogout = () => {
+    if(window.confirm("Are you sure you want to exit?")) {
+        sessionStorage.clear(); 
+        setCurrentView('home');
+        window.location.reload();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-900 text-white font-sans">
@@ -40,8 +52,12 @@ function App() {
       {/* --- VIEW 2: TEACHER LOBBY --- */}
       {currentView === 'teacher' && (
         <div className="relative">
-            {/* Back Button */}
-            <button onClick={() => setCurrentView('home')} className="absolute top-4 left-4 text-sm opacity-50 hover:opacity-100">← Back</button>
+            <button 
+                onClick={handleLogout} 
+                className="fixed top-4 left-4 z-[100] bg-red-500/20 hover:bg-red-500/50 text-white px-4 py-2 rounded-lg font-bold text-sm backdrop-blur-sm border border-red-500/30"
+            >
+                ← Exit Game
+            </button>
             <TeacherLobby />
         </div>
       )}
@@ -49,8 +65,12 @@ function App() {
       {/* --- VIEW 3: STUDENT JOIN --- */}
       {currentView === 'student' && (
         <div className="relative">
-            {/* Back Button */}
-            <button onClick={() => setCurrentView('home')} className="absolute top-4 left-4 text-sm opacity-50 hover:opacity-100">← Back</button>
+             <button 
+                onClick={handleLogout} 
+                className="fixed top-4 left-4 z-[100] bg-red-500/20 hover:bg-red-500/50 text-white px-4 py-2 rounded-lg font-bold text-sm backdrop-blur-sm border border-red-500/30"
+            >
+                ← Leave
+            </button>
             <StudentJoin />
         </div>
       )}
@@ -58,5 +78,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

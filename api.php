@@ -36,10 +36,14 @@ if ($action === 'join') {
 
     if (file_exists($file)) {
         $json = json_decode(file_get_contents($file), true);
+        
+        // ONLY set to 0 if the player doesn't exist yet.
+        // If they do exist, we leave their score alone.
         if (!isset($json['players'][$name])) {
             $json['players'][$name] = 0;
-            $json['player_status'][$name] = 'active'; // Default to active
+            $json['player_status'][$name] = 'active';
         }
+        
         file_put_contents($file, json_encode($json));
         echo json_encode(["success" => true]);
     } else {
