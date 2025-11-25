@@ -17,9 +17,11 @@ if ($action === 'create') {
     $pin = rand(100000, 999999);
     $gameState = [
         "pin" => $pin,
-        "status" => "lobby", // lobby, active, leaderboard
-        "current_question" => null, // Stores the text/options
-        "players" => [] // "Name" => Score
+        "status" => "lobby",
+        "music" => false,
+        "current_question" => null,
+        "players" => [], // "Name" => Score
+        "player_status" => [] // "Name" => "active" or "tabbed_out"  <-- NEW
     ];
     file_put_contents(getFile($pin), json_encode($gameState));
     echo json_encode(["success" => true, "pin" => $pin]);
@@ -35,7 +37,8 @@ if ($action === 'join') {
     if (file_exists($file)) {
         $json = json_decode(file_get_contents($file), true);
         if (!isset($json['players'][$name])) {
-            $json['players'][$name] = 0; // Start with 0 points
+            $json['players'][$name] = 0;
+            $json['player_status'][$name] = 'active'; // Default to active
         }
         file_put_contents($file, json_encode($json));
         echo json_encode(["success" => true]);
@@ -45,16 +48,15 @@ if ($action === 'join') {
     exit;
 }
 
-// --- 3. UPDATE GAME (Teacher sends Question) ---
+// --- 3. UPDATE GAME (Teacher) ---
 if ($action === 'update_game') {
     $pin = $data['pin'];
     $file = getFile($pin);
     if (file_exists($file)) {
         $json = json_decode(file_get_contents($file), true);
-        
-        // Update status and question data
         if (isset($data['status'])) $json['status'] = $data['status'];
         if (isset($data['current_question'])) $json['current_question'] = $data['current_question'];
+        if (isset($data['music'])) $json['music'] = $data['music'];
         
         file_put_contents($file, json_encode($json));
         echo json_encode(["success" => true]);
@@ -62,13 +64,12 @@ if ($action === 'update_game') {
     exit;
 }
 
-// --- 4. SUBMIT SCORE (Student answers right) ---
+// --- 4. SUBMIT SCORE ---
 if ($action === 'score') {
     $pin = $data['pin'];
     $name = $data['name'];
     $points = $data['points'];
     $file = getFile($pin);
-
     if (file_exists($file)) {
         $json = json_decode(file_get_contents($file), true);
         if (isset($json['players'][$name])) {
@@ -80,7 +81,24 @@ if ($action === 'score') {
     exit;
 }
 
-// --- 5. GET STATUS (Polling) ---
+// --- 5. NEW: REPORT FOCUS (Anti-Cheat) ---
+if ($action === 'focus') {
+    $pin = $data['pin'];
+    $name = $data['name'];
+    $isTabbedOut = $data['is_tabbed_out']; // true or false
+    $file = getFile($pin);
+    
+    if (file_exists($file)) {
+        $json = json_decode(file_get_contents($file), true);
+        // Save the status
+        $json['player_status'][$name] = $isTabbedOut ? 'tabbed_out' : 'active';
+        file_put_contents($file, json_encode($json));
+        echo json_encode(["success" => true]);
+    }
+    exit;
+}
+
+// --- 6. GET STATUS ---
 if ($action === 'status') {
     $pin = $_GET['pin'];
     $file = getFile($pin);
