@@ -4,10 +4,10 @@ This is the beta version of QUIZ FOR MIDZ, a Kahoot like quiz game that can take
 
 To play this game go to https://midn.cyber.usna.edu/~m265454/QuizForMidz/
 
+To install node.js and setup the working enviorment go to the following link and follow instructions posted in the README. https://gitlab.com/jldowns-usna/php-react-example/-/blob/main/README.md?ref_type=heads
 
 If hosting a session, click host, then insert a test yaml file. Once everyone has joined, click start game.
 Look below for an example yaml file. 
-
 
 quiz_title: "General Knowledge & Media Quiz"
 description: "A sample quiz testing geography and music recognition."
